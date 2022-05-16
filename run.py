@@ -25,7 +25,7 @@ from mbil.dynamics_model import DynamicsEnsemble
 
 def main():
     args = get_args()
-    dirs, ids, ensemble_checkpoint, logger, writer, device = setup(args, ask_prompt=True)
+    dirs, ids, ensemble_checkpoint, logger, writer, device = setup(args, ask_prompt=False)
 
     # ======== Dataset Setup ==========
     expert_db_path = os.path.join(args.data_path, 'expert_data', args.expert_db)

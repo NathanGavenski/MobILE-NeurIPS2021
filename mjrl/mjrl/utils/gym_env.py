@@ -45,7 +45,7 @@ class GymEnv(object):
         try:
             self._action_dim = self.env.env.action_dim
         except AttributeError:
-            self._action_dim = self.env.action_space.shape[0]
+            self._action_dim = self.env.action_space.n
 
         try:
             self._observation_dim = self.env.env.obs_dim
@@ -98,7 +98,12 @@ class GymEnv(object):
             action = (action[0].clip(self.action_space.low, self.action_space.high), \
                                      torch.from_numpy(action[1].numpy().clip(self.action_space.low, self.action_space.high)))
         else:
-            action = action.clip(self.action_space.low, self.action_space.high)
+            if isinstance(self.action_space, gym.spaces.Discrete):
+                action = action.clip(0, self.action_space.n)
+                action = np.argmax(action, axis=0)
+            else:
+                action = action.clip(self.action_space.low, self.action_space.high)
+
 
         if self.act_repeat == 1: 
             obs, cum_reward, done, ifo = self.env.step(action)

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-python run.py --env Hopper-v6 \
+python run.py --env CartPole-v1 \
               --seed 100 \
               --expert_db $1 \
               --num_trajs 10 \
@@ -23,4 +23,5 @@ python run.py --env Hopper-v6 \
               --grad_clip 4.0 \
               --norm_thresh_coeff 1 \
               --policy_min_log -1.0 \
-              --policy_init_log -0.5 
+              --policy_init_log -0.5 \
+              --planner ppo

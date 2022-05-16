@@ -115,13 +115,37 @@ class HumanoidModelWrapper(MujocoModelWrapper):
         super().__init__(env, model, horizon=500, init_state_buffer=init_state_buffer,\
                          norm_thresh=norm_thresh, device=device)
 
+class CartPoleModelWrapper(MujocoModelWrapper):
+    def __init__(self, env, model, init_state_buffer, norm_thresh, device):
+        super().__init__(env, model, horizon=500, init_state_buffer=init_state_buffer,\
+                         norm_thresh=norm_thresh, device=device)
+
+    def step(self, action):
+        assert(self.ob is not None)
+        self.num_steps += 1
+        with torch.no_grad():
+            state_input = torch.from_numpy(self.ob).float().unsqueeze(0).to(self.device)
+            action_input = torch.tensor([action]).to(self.device)[None]
+            state_diff = self.curr_model.forward(state_input, action_input)
+        self.ob += state_diff.squeeze(0).cpu().numpy()
+
+        # TODO: CLIP OBS
+        # self.ob = np.clip(self.ob, -50.0, 50.0)
+
+        reward = self.env.get_reward(self.ob, action)
+        done = self.is_done()
+
+        return copy.deepcopy(self.ob), reward, done, {}
+
+
 # NOTE: Add to dictionary as you keep creating more wrappers
 WRAPPERS = {
     'Hopper': HopperModelWrapper,
     'Walker2d': Walker2dModelWrapper,
     'HalfCheetah': HalfCheetahModelWrapper,
     'Ant': AntModelWrapper,
-    'Humanoid': HumanoidModelWrapper
+    'Humanoid': HumanoidModelWrapper,
+    'CartPole': CartPoleModelWrapper
 }
 
 def model_based_env(env, model, init_state_buffer=None, norm_thresh=float('inf'), device=torch.device('cpu')):
