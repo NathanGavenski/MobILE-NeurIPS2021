@@ -129,9 +129,6 @@ class CartPoleModelWrapper(MujocoModelWrapper):
             state_diff = self.curr_model.forward(state_input, action_input)
         self.ob += state_diff.squeeze(0).cpu().numpy()
 
-        # TODO: CLIP OBS
-        # self.ob = np.clip(self.ob, -50.0, 50.0)
-
         reward = self.env.get_reward(self.ob, action)
         done = self.is_done()
 

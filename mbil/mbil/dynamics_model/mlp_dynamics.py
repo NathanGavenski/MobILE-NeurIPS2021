@@ -128,7 +128,8 @@ class DynamicsEnsemble:
 
         # One-hot if Discrete action space
         if self.is_discrete:
-            action = torch.eye(self.action_dim)[action].view(action.shape[0], self.action_dim)
+            action = torch.eye(self.action_dim)[torch.argmax(action, dim=1).long()]
+            action = action.view(action.shape[0], self.action_dim)
 
         state = state.float().to(self.device)
         action = action.float().to(self.device)

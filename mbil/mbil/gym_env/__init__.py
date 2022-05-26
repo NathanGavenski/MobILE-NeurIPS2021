@@ -34,3 +34,9 @@ register(
     entry_point='mbil.gym_env.humanoid:HumanoidEnv',
     max_episode_steps=500,
 )
+
+register(
+    id='CartPole-v1',
+    entry_point='mbil.gym_env.cartpole:CartPoleEnv',
+    max_episode_steps=500,
+)
